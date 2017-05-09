@@ -17,10 +17,11 @@ public class MainPanel extends JPanel {
 
     /**
      * Creates new form MainPanel
+     * @throws java.lang.InstantiationException
      */
-    public MainPanel() {
+    public MainPanel() throws InstantiationException {
         initComponents();
-        createTabs();
+        setupPanel();
         
     }
 
@@ -33,37 +34,33 @@ public class MainPanel extends JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        mainTabbedPane = new javax.swing.JTabbedPane();
-
         setLayout(new java.awt.BorderLayout());
-        add(mainTabbedPane, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
 
     private JPanel createCalendarPanel(){
-        JPanel calendarPanel = new PlanerPanel();
-        calendarPanel.setLayout(new BoxLayout(calendarPanel, BoxLayout.PAGE_AXIS));
-        return calendarPanel;
+        JPanel planerPanel = new PlanerPanel();
+        
+        return planerPanel;
     }
     
-    private JPanel createPreachersTab(){
-        JPanel calendarPanel = new JPanel();
-        calendarPanel.setLayout(new BoxLayout(calendarPanel, BoxLayout.PAGE_AXIS));
-        return calendarPanel;
+    private JPanel createSettingPanel() throws InstantiationException{
+        JPanel settingsPanel = new SettingsPanel();
+        
+        return settingsPanel;
     }
     
     
-    private void createTabs(){
+    private void setupPanel() throws InstantiationException{
         
         JPanel calendarPanel = createCalendarPanel();
-        JPanel preachersPanel = createPreachersTab();
+        JPanel settingsPanel = createSettingPanel();
         
-        this.mainTabbedPane.addTab("Planung", calendarPanel);
-        this.mainTabbedPane.addTab("Prediger", preachersPanel);
+        this.add(calendarPanel, BorderLayout.CENTER);
+        this.add(settingsPanel, BorderLayout.SOUTH);
         
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTabbedPane mainTabbedPane;
     // End of variables declaration//GEN-END:variables
 }
