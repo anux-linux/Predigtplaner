@@ -5,8 +5,6 @@
  */
 package sbb.io;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,7 +22,7 @@ import sbb.model.Settings;
  *
  * @author Antonio
  */
-public class IOHandler implements PropertyChangeListener {
+public class IOHandler {
 
     private static final Charset DEFAUL_CHARSET = Charset.forName("UTF-8");
     private final File sourceFile;
@@ -51,13 +49,5 @@ public class IOHandler implements PropertyChangeListener {
 
     private void saveData() {
 
-    }
-
-    @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-	System.out.println(evt);
-	saveData();
-	// throw new UnsupportedOperationException("Not supported yet."); //To
-	// change body of generated methods, choose Tools | Templates.
     }
 }

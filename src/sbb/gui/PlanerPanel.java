@@ -5,10 +5,13 @@
  */
 package sbb.gui;
 
+import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BoxLayout;
+import javax.swing.DefaultCellEditor;
+import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -16,6 +19,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.RowSorter;
 import javax.swing.SortOrder;
 import javax.swing.event.ChangeEvent;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
@@ -29,50 +34,57 @@ import sbb.helper.date.DateHelper;
  */
 public class PlanerPanel extends JPanel implements DateChangeListener {
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private JScrollPane calendarScrollPane;
-    private JTable mainTableCalendar;
-    // End of variables declaration//GEN-END:variables
-
     private final DateHelper dateHelper;
+    // private JScrollPane calendarScrollPane;
 
     /**
      * Creates new form PlanerPanel
      */
-    public PlanerPanel() {
+    public PlanerPanel() throws InstantiationException {
 	this.dateHelper = DateHelper.getDateHelperInstance();
 	this.dateHelper.addDateChangeListener(this);
 	this.initPanel();
+	this.setOpaque(true);
 
     }
 
-    private void initPanel() {
+    private void initPanel() throws InstantiationException {
 	this.initComponents();
-	this.createScrollPanel();
-	this.createCalendar();
-	this.createTableModel();
-	this.updateColumnWidth();
-	this.createSorter();
+	updatePanel();
     }
 
-    private void updatePanel() {
-	this.createTableModel();
-	this.updateColumnWidth();
+    private void updatePanel() throws InstantiationException {
+	this.removeAll();
+	JTable mainTableCalendar = this.createCalendar();
+	JScrollPane calendarScrollPane = createScrollPanel(mainTableCalendar);
+	this.add(calendarScrollPane);
+	this.updateUI();
 
     }
 
-    private void createScrollPanel() {
-	this.calendarScrollPane = new JScrollPane();
-	add(calendarScrollPane);
+    private JScrollPane createScrollPanel(Component component) {
+	JScrollPane scrollPane = new JScrollPane(component);
+	return scrollPane;
     }
 
-    private void createCalendar() {
-	mainTableCalendar = new JTable();
+    private JTable createCalendar() throws InstantiationException {
+	JTable mainTableCalendar = new JTable();
 	mainTableCalendar.setColumnSelectionAllowed(true);
 	mainTableCalendar.getColumnModel().getSelectionModel()
 		.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 
-	calendarScrollPane.setViewportView(mainTableCalendar);
+	this.createTableModel(mainTableCalendar);
+
+	int maxColumns = mainTableCalendar.getColumnCount();
+	for (int i = 1; i < maxColumns; i++) {
+	    TableColumn column = mainTableCalendar.getColumnModel().getColumn(i);
+	    this.setUpCombobox(mainTableCalendar, column);
+	}
+
+	this.updateColumnWidth(mainTableCalendar);
+	this.createSorter(mainTableCalendar);
+
+	return mainTableCalendar;
 
     }
 
@@ -86,9 +98,9 @@ public class PlanerPanel extends JPanel implements DateChangeListener {
 	setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
     }
 
-    private void createSorter() {
+    private void createSorter(JTable table) {
 
-	RowSorter<TableModel> sorter = new TableRowSorter<TableModel>(mainTableCalendar.getModel()) {
+	RowSorter<TableModel> sorter = new TableRowSorter<TableModel>(table.getModel()) {
 	    @Override
 	    public boolean isSortable(int column) {
 		return column < 1;
@@ -97,18 +109,18 @@ public class PlanerPanel extends JPanel implements DateChangeListener {
 	List<RowSorter.SortKey> sortKeys = new ArrayList<RowSorter.SortKey>();
 	sortKeys.add(new RowSorter.SortKey(0, SortOrder.DESCENDING));
 	sorter.setSortKeys(sortKeys);
-	mainTableCalendar.setRowSorter(sorter);
+	table.setRowSorter(sorter);
     }
 
-    private void createTableModel() {
+    private void createTableModel(JTable table) throws InstantiationException {
 
 	TableModel mainModel = new MyTableModel();
-	mainTableCalendar.setModel(mainModel);
+	table.setModel(mainModel);
 
     }
 
-    private void updateColumnWidth() {
-	TableColumnModel tcm = mainTableCalendar.getColumnModel();
+    private void updateColumnWidth(JTable table) {
+	TableColumnModel tcm = table.getColumnModel();
 	int colCount = tcm.getColumnCount();
 
 	for (int i = 0; i < colCount; i++) {
@@ -122,9 +134,30 @@ public class PlanerPanel extends JPanel implements DateChangeListener {
 	}
     }
 
+    private void setUpCombobox(JTable table, TableColumn column) {
+	// Set up the editor for the sport cells.
+	JComboBox<String> comboBox = new JComboBox<String>();
+
+	comboBox.addItem("1");
+	comboBox.addItem("2");
+	comboBox.addItem("3");
+	comboBox.addItem("4");
+	comboBox.addItem("1v");
+	comboBox.addItem(" ");
+	column.setCellEditor(new DefaultCellEditor(comboBox));
+
+	// Set up tool tips for the sport cells.
+	DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
+	renderer.setToolTipText("Mein Tooltip");
+	column.setCellRenderer(renderer);
+    }
+
     @Override
     public void dateChanged(ChangeEvent ce) {
-	updatePanel();
+	try {
+	    updatePanel();
+	} catch (InstantiationException ie) {
+	}
     }
 
 }
