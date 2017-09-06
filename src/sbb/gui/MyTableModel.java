@@ -5,12 +5,14 @@
  */
 package sbb.gui;
 
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
+import sbb.controler.MainController;
+import sbb.controler.PlanerController;
 import sbb.helper.I18NHelper;
 import sbb.helper.date.DateHelper;
 import sbb.model.Preacher;
@@ -26,18 +28,23 @@ public class MyTableModel extends AbstractTableModel implements TableModel {
      * 
      */
     private static final long serialVersionUID = 1L;
-    private final DateHelper dateHelper = DateHelper.getDateHelperInstance();
+    private final DateHelper dateHelper;
     private final I18NHelper i18n;
     private final int maxDaysInMonth;
+    private final MainController mainController;
+    private final PlanerController planerController;
 
-    private final Set<Preacher> preachers;
+    private final List<Preacher> preachers;
     private final Map<String, PreachingTask> preachingTasks;
 
-    public MyTableModel(Set<Preacher> preachers, Map<String, PreachingTask> preachingTasks)
-	    throws InstantiationException {
+    public MyTableModel(PlanerController controller, List<Preacher> preachers,
+	    Map<String, PreachingTask> preachingTasks) {
 
+	this.planerController = controller;
+	this.mainController = planerController.getMainController();
+	this.dateHelper = mainController.getDateHelper();
+	this.i18n = mainController.geti18n();
 	this.maxDaysInMonth = this.dateHelper.getNumOfDaysInMonth();
-	this.i18n = I18NHelper.getInstance();
 	this.preachers = preachers;
 	this.preachingTasks = preachingTasks;
 
@@ -63,14 +70,15 @@ public class MyTableModel extends AbstractTableModel implements TableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
+	Preacher preacher = preachers.get(rowIndex);
 
 	if (columnIndex > 0) {
-	    return rowIndex + "/" + columnIndex;
+
+	    // PreachingTask task = preachingTasks.get(preacher);
+	    return "TEAS";
 	}
 
-	return "Test" + rowIndex + "/" + columnIndex;
-	// throw new UnsupportedOperationException("Not supported yet."); //To
-	// change body of generated methods, choose Tools | Templates.
+	return preacher.getName() + " " + preacher.getFamily();
     }
 
     @Override

@@ -11,6 +11,7 @@ import java.awt.Container;
 import javax.swing.JFrame;
 import javax.swing.event.ChangeEvent;
 
+import sbb.controler.MainController;
 import sbb.helper.I18NHelper;
 import sbb.helper.date.DateChangeListener;
 import sbb.helper.date.DateHelper;
@@ -21,33 +22,35 @@ import sbb.helper.date.DateHelper;
  */
 public class MainFrame extends JFrame implements DateChangeListener {
 
-    private final I18NHelper i18n;
-    private final DateHelper dataHelper;
+    private final MainController mainController;
+    private DateHelper dateHelper;
+    private I18NHelper i18n;
 
     /**
      * Creates new form MainFrame
      */
-    public MainFrame() throws InstantiationException {
-	this.i18n = I18NHelper.getInstance();
-	this.dataHelper = DateHelper.getDateHelperInstance();
-	this.dataHelper.addDateChangeListener(this);
-	initComponents();
-	createMainPanel();
+    public MainFrame(MainController controller) {
+	this.mainController = controller;
+	initControllerDependencies();
 
     }
 
-    private void createMainPanel() throws InstantiationException {
-	MainPanel mainPanel = new MainPanel();
+    private void initControllerDependencies() {
+	this.dateHelper = this.mainController.getDateHelper();
+	this.dateHelper.addDateChangeListener(this);
+	this.i18n = this.mainController.geti18n();
+    }
+
+    public void addMainPanel(MainPanel mainPanel) {
 	Container mainContainer = this.getContentPane();
 	mainContainer.add(mainPanel, BorderLayout.CENTER);
 	updateTitel();
 	this.setSize(1200, 600);
-	// pack();
     }
 
     private void updateTitel() {
-	int year = dataHelper.getCurrentYear();
-	int currentMonth = dataHelper.getCurrentMonth();
+	int year = this.dateHelper.getCurrentYear();
+	int currentMonth = this.dateHelper.getCurrentMonth();
 	String month = this.i18n.getStringResource("global.month." + currentMonth);
 	this.setTitle("Predigtplaner " + month + " " + year);
     }

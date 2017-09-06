@@ -14,8 +14,6 @@ import java.util.ResourceBundle;
  */
 public class I18NHelper {
 
-    private static I18NHelper i18nHelper = null;
-
     private final String path = "sbb/resources/";
     private final String stringproperties = "I18NStrings";
     private final ResourceBundle stringResources;
@@ -25,19 +23,6 @@ public class I18NHelper {
     public I18NHelper(Locale locale) {
 	stringResources = ResourceBundle.getBundle(path + stringproperties, locale);
 	this.defaultSeperator = stringResources.getString("default.separator");
-    }
-
-    public static void init(Locale locale) {
-	if (i18nHelper == null) {
-	    i18nHelper = new I18NHelper(locale);
-	}
-    }
-
-    public static I18NHelper getInstance() throws InstantiationException {
-	if (i18nHelper == null) {
-	    throw new InstantiationException("You need to call init(Locale) first.");
-	}
-	return i18nHelper;
     }
 
     public String getStringResource(String key) {

@@ -22,9 +22,7 @@ public class DateHelper {
 
     private final Set<DateChangeListener> dateChangeListener;
 
-    private static DateHelper dataHelperInstance = null;
-
-    private DateHelper() {
+    public DateHelper() {
 	this.currentTime = new GregorianCalendar();
 	dateChangeListener = new HashSet<DateChangeListener>();
     }
@@ -35,14 +33,6 @@ public class DateHelper {
 
     public int getNumOfDaysInMonth() {
 	return currentTime.getActualMaximum(Calendar.DAY_OF_MONTH);
-    }
-
-    public static DateHelper getDateHelperInstance() {
-	if (dataHelperInstance == null) {
-	    dataHelperInstance = new DateHelper();
-	}
-	return dataHelperInstance;
-
     }
 
     public int getCurrentMonth() {
